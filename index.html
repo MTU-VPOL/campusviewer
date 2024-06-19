@@ -2,12 +2,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Sanborn Building Image Viewer Beta</title>  
+  <title>MTU Historical Campus Photo Viewer</title>  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1.0/build/openseadragon/openseadragon.min.js"></script>
-  <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
-  <script src="https://js.arcgis.com/4.28/"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.29/"></script>
   <style>
     /*Map container*/
 #viewDiv {
@@ -126,7 +126,7 @@
 
   const bsOffcanvas = new bootstrap.Offcanvas('#offcanvasRight')
 
-  esriConfig.apiKey = "YOUR_API_KEY";
+  //esriConfig.apiKey = "YOUR_API_KEY";
 
   const viewer = OpenSeadragon({
     id: "openseadragon1",
@@ -151,17 +151,17 @@
     zoom: 19
   });
   
-  const footprints_1908 = new FeatureLayer({
-    url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/Hosted/sanborn_1908_footprints_with_image_coords/FeatureServer/0",
+  const footprints = new FeatureLayer({
+    url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Campus_Buildings/FeatureServer/0",
     popupEnabled: true,
-    definitionExpression: "img_coords is not null",
+    definitionExpression: "BldgYear = 1965",
     outFields: ["*"]
   });
 
-  map.add(footprints_1908, 1);
+  map.add(footprints, 1);
 
   const sanborn_1908 = new TileLayer({
-    url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/capmis1965_new/MapServer&token=3NKHt6i2urmWtqOuugvr9Qa7G96-wCSf11upGQVAvSpyNENg_0zQ6B1WWUuoNeigewFEd9KOcWM5fk1-eYrXyjrLKiAuy6y1aGUVKOUY09BSVlnkWl-kjCtxiSOoDvqZ_7sB79KyB6d4jD5pebxda5Tboxg6z_Yusw1R_urnpZk5R4UKl9-Brxzw3_6xmE4mB40UkyhWDfu_IseXquj4uCphDfuGLJllNvyJNAu9TnVhCS46heP4Al6Dg9z7y6VU&cacheKey=804c5e6f3ff8d7fe"
+    url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/MTU_Campus_1965/MapServer"
   });
 
   map.add(sanborn_1908, 0);
