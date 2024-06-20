@@ -134,7 +134,7 @@
     maxZoomLevel: null, 
     tileSources: {
       type: "image",
-      url: "https://cchi-iif.mtu.edu/iiif/3/Book-LD3328H3-131-4.jpg/full/max/0/default.jpg"
+      url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.jpg/full/max/0/default.jpg"
     },   
   });
 
@@ -151,23 +151,35 @@
     zoom: 19
   });
   
+  var renderer = {
+    type: "simple",  // autocasts as new SimpleRenderer()
+    symbol: {
+      type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+      color: [ 255, 128, 0, 0 ],
+      outline: {  // autocasts as new SimpleLineSymbol()
+        width: 3,
+        color: "red"
+      }
+    }
+  }; 
   const footprints = new FeatureLayer({
     url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Campus_Buildings/FeatureServer/0",
     popupEnabled: true,
-    definitionExpression: "BldgYear = 1965",
+    definitionExpression: "BldgYear = 1900",
+    renderer: renderer,
     outFields: ["*"]
   });
 
   map.add(footprints, 1);
 
   const sanborn_1908 = new TileLayer({
-    url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/MTU_Campus_1965/MapServer"
+    url: "https://portal1-geo.sabu.mtu.edu:6443/arcgis/rest/services/KeweenawHSDI/KeTT_1900_FIPS/MapServer"
   });
 
   map.add(sanborn_1908, 0);
 
   // Create a popup template for the photos layer
-  footprints_1908.popupTemplate = {
+  footprints.popupTemplate = {
     title:'footprint',
     content: "Description"    
   };
@@ -207,7 +219,7 @@
     console.log(graphic);
     //const imgDesc = graphic.attributes.image_desc;
     //const imgUrl = graphic.attributes.image_url;
-    const imgCoords = graphic.attributes.img_coords;
+    const imgCoords = graphic.attributes.PhotoXY;
     const address = graphic.attributes.address;
     const place_name = graphic.attributes.place_nam;
 
