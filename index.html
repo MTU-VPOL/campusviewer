@@ -2,9 +2,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>MTU Historical Campus Photo Viewer</title>  
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <title>MTU Historical Campus Photo Viewer</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>  
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+<script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
   <script src="https://cdn.jsdelivr.net/npm/openseadragon@4.1.0/build/openseadragon/openseadragon.min.js"></script>
   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.29/"></script>
@@ -14,42 +16,34 @@
   position: absolute;
   top: 0;
   bottom: 0;        
-  padding: 0;
-  margin-top: 56px;        
+  padding: 0;         
   width: 100%;
+  margin-top: 56px;
 }
 
 .esri-ui .esri-popup  {
   display:  none !important;
  }  
 
- #offcanvasRight {
-  width: 50%;
-  margin-top: 56px;
- }   
+ion-split-pane {
+  --side-width: 50%;
+  --side-max-width: 50%; 
+  --border: none;
+}
+
+ ion-range {
+  width: 30%;
+  position: absolute;
+  top:65px;
+  left: 50px;
+ }
 
  .responsive {
   width: 100%;
   height: auto;
 }
 
-.navbar {
-  height: 56px !important;
-  --bs-navbar-padding-y: 0 !important;
-}
 
-.navbar-brand {
-  padding: 0 0px;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;   
-}
-
-
-.bg-body-tertiary {
-  background-color: #363636 !important; 
-}
 
 .pulsing-dot{
     position: absolute;
@@ -124,9 +118,9 @@
     "esri/core/reactiveUtils"
   ], function(esriConfig, Map, MapView, FeatureLayer, TileLayer,  reactiveUtils) {
 
-  const bsOffcanvas = new bootstrap.Offcanvas('#offcanvasRight')
+   var modal = document.querySelector('ion-modal');
 
-  //esriConfig.apiKey = "YOUR_API_KEY";
+    modal.isOpen = true;
 
   const viewer = OpenSeadragon({
     id: "openseadragon1",
@@ -137,8 +131,6 @@
     //  url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg"
    // },   
   });
-
-  bsOffcanvas.show();
 
   const map = new Map({
     basemap: "satellite"
@@ -151,7 +143,7 @@
     zoom: 19
   });
   
-  var renderer = {
+  const renderer = {
     type: "simple",  // autocasts as new SimpleRenderer()
     symbol: {
       type: "simple-fill",  // autocasts as new SimpleFillSymbol()
@@ -162,6 +154,7 @@
       }
     }
   }; 
+
   const footprints = new FeatureLayer({
     url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Campus_Buildings/FeatureServer/0",
     popupEnabled: true,
@@ -171,30 +164,100 @@
   });
 
   map.add(footprints, 1);
-
+/*
   const sanborn_1908 = new TileLayer({
     url: "https://portal1-geo.sabu.mtu.edu:6443/arcgis/rest/services/KeweenawHSDI/KeTT_1900_FIPS/MapServer"
   });
 
   map.add(sanborn_1908, 0);
-
+*/
   // Create a popup template for the photos layer
   footprints.popupTemplate = {
     title:'footprint',
     content: "Description"    
   };
 
-  function goToYear (year, map) {
-    
+  // Create an object to store tile layers
+  const tileLayers = {
+    map_1949: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/KeweenawHSDI/Kett_19496_FIPS/MapServer?f=jsapi",
+    }),
+    map_1900: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/KeweenawHSDI/KeTT_1900_FIPS/MapServer",
+    }),
+    map_1908: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/KeweenawHSDI/KeTT_1908_FIPS/MapServer",
+    }),
+    map_1917: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/KeweenawHSDI/KeTT_1917_FIPS/MapServer",    
+    }),
+     map_1928: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/KeweenawHSDI/KeTT_1928_FIPS/MapServer",    
+    }), 
+     map_1954: new TileLayer({
+      url: "https://portal1-geo.sabu.mtu.edu/server/rest/services/Hosted/mtu1955/MapServer",    
+    }), 
+     map_1955: new TileLayer({
+      url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/campus1955/MapServer",    
+    }), 
+     map_1965: new TileLayer({
+      url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/MTU_Campus_1965/MapServer",    
+    }),
+  }; 
+
+   const range = document.querySelector('ion-range');
+  
+  // Switches the building footprints and map based on the year selected
+  function goToYear (year) {
+    // filter the building footprints based on the year
+    footprints.definitionExpression = "BldgYear = " + year + "AND PhotoXY is not null";
+
+    // Keep track of the currently active tile layers
+    let activeTileLayer = null;
+    // get variable from attributes for the map year string
+    const mapstr = "map_" + year;
+    console.log(mapstr);
+    // Remove the previously active tile layer, if any
+    if (activeTileLayer) {
+      map.remove(activeTileLayer);
+    }
+
+    // Retrieve the tile layer from the tileLayers object
+    const tileLayerToAdd = tileLayers[mapstr];
+
+    if (tileLayerToAdd) {
+      // Add the retrieved tile layer to the map
+      map.add(tileLayerToAdd, 0);
+      activeTileLayer = tileLayerToAdd; // Update the active layer
+      // get the value of the range slider  
+      let rangeVal = $( "ion-range" ).val();
+     
+      activeTileLayer.opacity = rangeVal / 100;        
+     
+      // adjust the transparency of the map based on the sliders value  
+      range.addEventListener('ionInput', ({ detail }) => {                     
+          activeTileLayer.opacity = detail.value / 100;                  
+      });               
+    } else {
+      console.log("Tile layer not found for the given map year:", year);
+    }
+    // Go to the extent of the data
+    footprints
+    .when(() => {
+      return footprints.queryExtent();
+    })
+    .then((response) => {
+      view.goTo(response.extent);
+    });
   }
+
+  goToYear(1955);
   
   viewer.addHandler('open', function() {
     var tiledImage = viewer.world.getItemAt(0);
     var imgWidth = tiledImage.getContentSize().x;
-    var imgHeight = tiledImage.getContentSize().y;
-    
+    var imgHeight = tiledImage.getContentSize().y;    
     console.log("Image dimensions in pixels:", imgWidth, imgHeight);
-
   });
 
   viewer.addHandler('canvas-click', function(event) {
@@ -221,8 +284,7 @@
  reactiveUtils.watch(
   () => view.popup.selectedFeature,
   (graphic) => {
-    if (graphic) {  
-    bsOffcanvas.show();   
+    if (graphic) {       
     console.log(graphic);
     //const imgDesc = graphic.attributes.image_desc;
     //const imgUrl = graphic.attributes.image_url;
@@ -239,8 +301,6 @@
     currentImg = photoid;
 
     console.log(currentImg);
-
-
 
     if (imgCoords != null) {
 
@@ -330,25 +390,80 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
 
 </head>
 <body>
-  <nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="husky.svg" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
-      <span id="apptitle">Historic Campus Photo Viewer</span>
-    </a>
-  </div>
-</nav>
-  <div id="viewDiv"></div>
-  <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
+<ion-app>
+  <ion-modal trigger="open-modal">
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button onclick="cancel()">Cancel</ion-button>
+        </ion-buttons>
+        <ion-title>Choose Historic Campus Year</ion-title>
+        <ion-buttons slot="end">
+          <ion-button onclick="confirm()" strong="true">Confirm</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+     <ion-card>
+  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+  <ion-card-header>
+    <ion-card-title>Card Title</ion-card-title>
+    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+  </ion-card-header>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" data-bs-scholl="true" data-bs-backdrop="false" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasRightLabel"><div id="title"></div></h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <ion-card-content>
+    Here's a small text description for the card content. Nothing more, nothing less.
+  </ion-card-content>
+</ion-card>
+<ion-card>
+  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+  <ion-card-header>
+    <ion-card-title>Card Title</ion-card-title>
+    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    Here's a small text description for the card content. Nothing more, nothing less.
+  </ion-card-content>
+</ion-card>
+<ion-card>
+  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+  <ion-card-header>
+    <ion-card-title>Card Title</ion-card-title>
+    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    Here's a small text description for the card content. Nothing more, nothing less.
+  </ion-card-content>
+</ion-card>
+    </ion-content>
+  </ion-modal>
+  <ion-split-pane when="xs" content-id="main">
+  <ion-menu content-id="main">
+    <ion-header>
+      <ion-toolbar color="dark">     
+       <ion-buttons slot="start">
+        <ion-img src="husky.svg" style="width: 50px; height: 50px;"></ion-img>
+      </ion-buttons>  
+      <ion-title>Historic Campus Photo Viewer</ion-title>    
+  </ion-toolbar>
+    </ion-header>
+    <ion-content">
+      <div id="viewDiv"></div>
+      <ion-range value="100" mode="ios"></ion-range> 
+    </ion-content>
+  </ion-menu>
+
+  <div class="ion-page" id="main">
+    <ion-header>
+      <ion-toolbar color="dark">        
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+     <div id='openseadragon1' class="responsive"></div> </ion-content>
   </div>
-  <div class="offcanvas-body">
-   <div id='openseadragon1' class-="responsive"></div>
-  </div>
-</div>
+</ion-split-pane>
+</ion-app">
 </body>
 </html>
