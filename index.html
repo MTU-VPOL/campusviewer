@@ -132,10 +132,10 @@
     id: "openseadragon1",
     prefixUrl: "https://cdn.jsdelivr.net/npm/openseadragon@2.4/build/openseadragon/images/",
     maxZoomLevel: null, 
-    tileSources: {
-      type: "image",
-      url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.jpg/full/max/0/default.jpg"
-    },   
+    //tileSources: {
+     // type: "image",
+    //  url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg"
+   // },   
   });
 
   bsOffcanvas.show();
@@ -183,6 +183,10 @@
     title:'footprint',
     content: "Description"    
   };
+
+  function goToYear (year, map) {
+    
+  }
   
   viewer.addHandler('open', function() {
     var tiledImage = viewer.world.getItemAt(0);
@@ -210,6 +214,9 @@
   // the image does not have an overlay
   var overlay = false;
 
+  // keep track of the current image
+  let currentImg = null;  
+
  // watch for a click on the building footprints  
  reactiveUtils.watch(
   () => view.popup.selectedFeature,
@@ -220,10 +227,32 @@
     //const imgDesc = graphic.attributes.image_desc;
     //const imgUrl = graphic.attributes.image_url;
     const imgCoords = graphic.attributes.PhotoXY;
-    const address = graphic.attributes.address;
-    const place_name = graphic.attributes.place_nam;
+    const desc = graphic.attributes.Description;    
+    const photoid = graphic.attributes.PhotoID;
+    const year = graphic.attributes.BldgYear; 
+    const map = graphic.attributes.Map;
+    console.log(photoid);
+     if (currentImg != photoid) {
+      console.log("not equal");
+    }
+
+    currentImg = photoid;
+
+    console.log(currentImg);
+
+
 
     if (imgCoords != null) {
+
+     // Construct the new IIIF URL
+    const newTileSource = "https://cchi-iif.mtu.edu/iiif/3/" + encodeURIComponent(photoid) + "/full/max/0/default.jpg";
+    console.log("New tile source URL:", newTileSource);
+
+    // Try opening the new tile source
+    viewer.open({
+        type: "image",
+        url: newTileSource
+    })  
 
     const coordsArr = imgCoords.split(",");
     console.log(coordsArr);
@@ -235,6 +264,11 @@
       viewer.removeOverlay("img-pin");        
     } 
 
+     viewer.addHandler('open', function() {
+
+      if (overlay == true) {
+        viewer.removeOverlay("img-pin");        
+      } 
     const tiledImage = viewer.world.getItemAt(0);
 
     // Convert string values to floats
@@ -245,6 +279,7 @@
 
  // Convert the image coordinates to viewport coordinates
  var viewportPoint = tiledImage.imageToViewportCoordinates(new OpenSeadragon.Point(imageX, imageY));
+
 
  // Create an HTML element for the pin
   var pin = document.createElement("img");
@@ -276,7 +311,9 @@ var deltaY = .2; // Example value, adjust based on how much area you want to sho
 var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - deltaY, 2 * deltaX, 2 * deltaY);
 
 viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
-document.getElementById("title").innerHTML = address + ", " + place_name;
+//document.getElementById("title").innerHTML = address + ", " + place_name;
+
+});
 
 // Center the viewport on the point
 //viewer.viewport.panTo(viewportPoint, true);
@@ -288,7 +325,7 @@ document.getElementById("title").innerHTML = address + ", " + place_name;
 }
   });
 
-  });
+});
 </script>
 
 </head>
