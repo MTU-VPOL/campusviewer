@@ -11,14 +11,40 @@
   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.29/"></script>
   <style>
-    /*Map container*/
+
+/* Custom CSS for round zoom controls */
+.esri-widget {
+  background-color: rgba(0,0,0,0) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0) !important;
+}
+.esri-widget--button {
+  background-color: none; /* Set background color */          
+  border-radius: 0%; /* Make them round */
+  width: 40px; /* Width of the button */
+  height: 40px; /* Height of the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Add shadow */
+  margin: 5px; /* Margin between buttons */
+  padding: 0;
+}
+
+.esri-widget--button .esri-icon {
+    margin: 0; /* Center the icon */
+    font-size: 30px; /* Size of the icon */
+    font-weight: 700;
+    color: #0079c1; /* Icon color */
+}
+
+/*Map container*/
 #viewDiv {
   position: absolute;
   top: 0;
   bottom: 0;        
   padding: 0;         
   width: 100%;
-  margin-top: 56px;
+  margin-top: 48.4999px;
 }
 
 .esri-ui .esri-popup  {
@@ -31,19 +57,41 @@ ion-split-pane {
   --border: none;
 }
 
- ion-range {
+#rangecontainer {
+  background-color: white;
   width: 30%;
   position: absolute;
-  top:65px;
-  left: 50px;
+  top:68px;
+  left: 70px;
  }
+
+
+  ion-range {
+      width: 30%;
+  position: absolute;
+  top:68px;
+  left: 90px;
+        --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
+        --bar-background: #83A1A0;
+        --bar-background-active: #d7d8da;
+        --bar-height: 6px;
+        --bar-border-radius: 8px;
+        --knob-background: #ffffff;
+        --knob-size: 30px;
+        --pin-background: #ffafcc;
+        --pin-color: #fff; 
+    }
+
+  ion-segment {
+    --background: #ffcd00;
+     --indicator-color: black; !important /* Change this to your desired color */
+     --color: black;
+  }
 
  .responsive {
   width: 100%;
   height: auto;
-}
-
-
+  }
 
 .pulsing-dot{
     position: absolute;
@@ -120,7 +168,7 @@ ion-split-pane {
 
    var modal = document.querySelector('ion-modal');
 
-    modal.isOpen = true;
+    modal.isOpen = false;
 
   const viewer = OpenSeadragon({
     id: "openseadragon1",
@@ -158,7 +206,7 @@ ion-split-pane {
   const footprints = new FeatureLayer({
     url: "https://services2.arcgis.com/RPhrOu9XQzI31xTa/arcgis/rest/services/Campus_Buildings/FeatureServer/0",
     popupEnabled: true,
-    definitionExpression: "BldgYear = 1900",
+    definitionExpression: "BldgYear = 1908",
     renderer: renderer,
     outFields: ["*"]
   });
@@ -205,15 +253,19 @@ ion-split-pane {
     }),
   }; 
 
+
+
    const range = document.querySelector('ion-range');
+   const datePicker = document.querySelector('ion-segment');
+   // Keep track of the currently active tile layers
+    let activeTileLayer = null;
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
     // filter the building footprints based on the year
     footprints.definitionExpression = "BldgYear = " + year + "AND PhotoXY is not null";
 
-    // Keep track of the currently active tile layers
-    let activeTileLayer = null;
+    
     // get variable from attributes for the map year string
     const mapstr = "map_" + year;
     console.log(mapstr);
@@ -251,7 +303,17 @@ ion-split-pane {
     });
   }
 
-  goToYear(1955);
+
+goToYear(parseInt(1900));
+  // Listen for changes on the date picker
+  datePicker.addEventListener('ionChange', (value) => {
+
+    console.log(event.detail.value);
+
+    const mapYear = parseInt(event.detail.value);
+    // Update the map and footprints with the corresponding date
+    goToYear(mapYear);
+    });  
   
   viewer.addHandler('open', function() {
     var tiledImage = viewer.world.getItemAt(0);
@@ -308,7 +370,7 @@ ion-split-pane {
     const newTileSource = "https://cchi-iif.mtu.edu/iiif/3/" + encodeURIComponent(photoid) + "/full/max/0/default.jpg";
     console.log("New tile source URL:", newTileSource);
 
-    // Try opening the new tile source
+    // Open a new image in the viewer
     viewer.open({
         type: "image",
         url: newTileSource
@@ -366,8 +428,8 @@ viewer.addOverlay({
   location: viewportPoint 
 });    
 
-var deltaX = .2; // Example value, adjust based on how much area you want to show
-var deltaY = .2; // Example value, adjust based on how much area you want to show
+var deltaX = .5; // Example value, adjust based on how much area you want to show
+var deltaY = .5; // Example value, adjust based on how much area you want to show
 var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - deltaY, 2 * deltaX, 2 * deltaY);
 
 viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
@@ -404,7 +466,10 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-     <ion-card>
+      <ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-card>
   <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
   <ion-card-header>
     <ion-card-title>Card Title</ion-card-title>
@@ -415,7 +480,9 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     Here's a small text description for the card content. Nothing more, nothing less.
   </ion-card-content>
 </ion-card>
-<ion-card>
+    </ion-col>
+    <ion-col>
+      <ion-card>
   <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
   <ion-card-header>
     <ion-card-title>Card Title</ion-card-title>
@@ -426,7 +493,9 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     Here's a small text description for the card content. Nothing more, nothing less.
   </ion-card-content>
 </ion-card>
-<ion-card>
+    </ion-col>
+    <ion-col>
+      <ion-card>
   <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
   <ion-card-header>
     <ion-card-title>Card Title</ion-card-title>
@@ -437,6 +506,9 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     Here's a small text description for the card content. Nothing more, nothing less.
   </ion-card-content>
 </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>
     </ion-content>
   </ion-modal>
   <ion-split-pane when="xs" content-id="main">
@@ -449,8 +521,26 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
       <ion-title>Historic Campus Photo Viewer</ion-title>    
   </ion-toolbar>
     </ion-header>
-    <ion-content">
+    <ion-content>
+  <ion-segment value="1900">
+  <ion-segment-button value="1900">
+    <ion-label>Campus 1900</ion-label>
+  </ion-segment-button>  
+  <ion-segment-button value="1917">
+    <ion-label>Campus 1917</ion-label>
+  </ion-segment-button> 
+  <ion-segment-button value="1954">
+    <ion-label>Campus 1954</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="1955">
+    <ion-label>Campus 1955</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="1965">
+    <ion-label>Campus 1965</ion-label>
+  </ion-segment-button>
+</ion-segment>
       <div id="viewDiv"></div>
+     
       <ion-range value="100" mode="ios"></ion-range> 
     </ion-content>
   </ion-menu>
