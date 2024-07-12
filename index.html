@@ -67,20 +67,20 @@ ion-split-pane {
 
 
   ion-range {
-      width: 30%;
-  position: absolute;
-  top:68px;
-  left: 90px;
-        --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
-        --bar-background: #83A1A0;
-        --bar-background-active: #d7d8da;
-        --bar-height: 6px;
-        --bar-border-radius: 8px;
-        --knob-background: #ffffff;
-        --knob-size: 30px;
-        --pin-background: #ffafcc;
-        --pin-color: #fff; 
-    }
+    width: 30%;
+    position: absolute;
+    top:68px;
+    left: 90px;
+    --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
+    --bar-background: #83A1A0;
+    --bar-background-active: #d7d8da;
+    --bar-height: 6px;
+    --bar-border-radius: 8px;
+    --knob-background: #ffffff;
+    --knob-size: 30px;
+    --pin-background: #ffafcc;
+    --pin-color: #fff; 
+  }
 
   ion-segment {
     --background: #ffcd00;
@@ -174,10 +174,11 @@ ion-split-pane {
     id: "openseadragon1",
     prefixUrl: "https://cdn.jsdelivr.net/npm/openseadragon@2.4/build/openseadragon/images/",
     maxZoomLevel: null, 
-    //tileSources: {
-     // type: "image",
-    //  url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg"
-   // },   
+    showFullPageControl: false,  // Disable the full page button
+    tileSources: {
+     type: "image",
+    url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg"
+    },   
   });
 
   const map = new Map({
@@ -251,24 +252,22 @@ ion-split-pane {
      map_1965: new TileLayer({
       url: "https://tiles.arcgis.com/tiles/RPhrOu9XQzI31xTa/arcgis/rest/services/MTU_Campus_1965/MapServer",    
     }),
-  }; 
-
-
+  };
 
    const range = document.querySelector('ion-range');
    const datePicker = document.querySelector('ion-segment');
    // Keep track of the currently active tile layers
-    let activeTileLayer = null;
+   let activeTileLayer = null;
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
     // filter the building footprints based on the year
     footprints.definitionExpression = "BldgYear = " + year + "AND PhotoXY is not null";
-
     
     // get variable from attributes for the map year string
     const mapstr = "map_" + year;
     console.log(mapstr);
+
     // Remove the previously active tile layer, if any
     if (activeTileLayer) {
       map.remove(activeTileLayer);
@@ -303,18 +302,18 @@ ion-split-pane {
     });
   }
 
+  // start off at the default year
+  goToYear(1900);
 
-goToYear(parseInt(1900));
   // Listen for changes on the date picker
   datePicker.addEventListener('ionChange', (value) => {
-
     console.log(event.detail.value);
-
     const mapYear = parseInt(event.detail.value);
     // Update the map and footprints with the corresponding date
     goToYear(mapYear);
-    });  
-  
+  });  
+
+  // when a new image opens in the viewer
   viewer.addHandler('open', function() {
     var tiledImage = viewer.world.getItemAt(0);
     var imgWidth = tiledImage.getContentSize().x;
@@ -322,6 +321,7 @@ goToYear(parseInt(1900));
     console.log("Image dimensions in pixels:", imgWidth, imgHeight);
   });
 
+  // when the user clicks on the image in the viewer
   viewer.addHandler('canvas-click', function(event) {
     // The canvas-click event gives us a position in web coordinates.
     var webPoint = event.position;
@@ -459,7 +459,7 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
         <ion-buttons slot="start">
           <ion-button onclick="cancel()">Cancel</ion-button>
         </ion-buttons>
-        <ion-title>Choose Historic Campus Year</ion-title>
+        <ion-title>About this Application</ion-title>
         <ion-buttons slot="end">
           <ion-button onclick="confirm()" strong="true">Confirm</ion-button>
         </ion-buttons>
@@ -547,7 +547,11 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
 
   <div class="ion-page" id="main">
     <ion-header>
-      <ion-toolbar color="dark">        
+
+      <ion-toolbar color="dark"> 
+     <ion-button size="med" slot="end">
+  <ion-icon name="information-circle-outline" size="large" slot="icon-only"></ion-icon>
+</ion-button>     
       </ion-toolbar>
     </ion-header>
     <ion-content>
