@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>MTU Historical Campus Photo Viewer</title>
+  <title>MTU Historical Campus Building Explorer</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>  
   <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
 <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
@@ -47,9 +47,9 @@
   margin-top: 48.4999px;
 }
 
-.esri-ui .esri-popup  {
+/*.esri-ui .esri-popup  {
   display:  none !important;
- }  
+ }  */
 
 ion-split-pane {
   --side-width: 50%;
@@ -172,7 +172,7 @@ ion-split-pane {
 
   const viewer = OpenSeadragon({
     id: "openseadragon1",
-    prefixUrl: "https://cdn.jsdelivr.net/npm/openseadragon@2.4/build/openseadragon/images/",
+    prefixUrl: "https://cdn.jsdelivr.net/gh/Benomrans/openseadragon-icons@main/images/",
     maxZoomLevel: null, 
     showFullPageControl: false,  // Disable the full page button
     tileSources: {
@@ -258,6 +258,11 @@ ion-split-pane {
    const datePicker = document.querySelector('ion-segment');
    // Keep track of the currently active tile layers
    let activeTileLayer = null;
+
+   // closes the modal window
+   function cancel() {
+    modal.isOpen = false;
+   }
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
@@ -455,60 +460,28 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
 <ion-app>
   <ion-modal trigger="open-modal">
     <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button onclick="cancel()">Cancel</ion-button>
-        </ion-buttons>
+      <ion-toolbar>        
         <ion-title>About this Application</ion-title>
         <ion-buttons slot="end">
-          <ion-button onclick="confirm()" strong="true">Confirm</ion-button>
+          <ion-button onclick="cancel()" strong="true">X</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <ion-grid>
-  <ion-row>
-    <ion-col>
-      <ion-card>
-  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-  <ion-card-header>
-    <ion-card-title>Card Title</ion-card-title>
-    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-  </ion-card-header>
+      <ion-text><h3>About</h3></ion-text>
+      <ion-text>
+        <p>Welcome to the Michigan Tech Historical Campus Building Explorer. This is an interactive application where you can explore what Michigan Tech's Campus looked like in the past through the use of historical maps and photographs. The application will allow you can view campus during different periods of time from the early 1900s to the late 1960s and make comparisions to what campus looks like today.</p>
+        <p>
 
-  <ion-card-content>
-    Here's a small text description for the card content. Nothing more, nothing less.
-  </ion-card-content>
-</ion-card>
-    </ion-col>
-    <ion-col>
-      <ion-card>
-  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-  <ion-card-header>
-    <ion-card-title>Card Title</ion-card-title>
-    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-  </ion-card-header>
+        Some of the maps in this application are future plans, meaning they give an idea of what may be built on campus in the future. What this means is that a map from 1955 may have buildings that were not actually built until the 1960s. Therefore, there may be some disrepencies between the photo and the map for certain periods of time. </p>
 
-  <ion-card-content>
-    Here's a small text description for the card content. Nothing more, nothing less.
-  </ion-card-content>
-</ion-card>
-    </ion-col>
-    <ion-col>
-      <ion-card>
-  <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
-  <ion-card-header>
-    <ion-card-title>Card Title</ion-card-title>
-    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-  </ion-card-header>
+        <p> The historical maps in this application such as Historical Campus Maps and Sanborn Fire Insurance Plans are from the Keweenaw Time Travler project. The photographs are from the Michigan Tech Archives.</p> 
+      </ion-text> 
 
-  <ion-card-content>
-    Here's a small text description for the card content. Nothing more, nothing less.
-  </ion-card-content>
-</ion-card>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+        <ion-text><h3>Using the Application</h3></ion-text>
+        <ion-text><p>Use the Date Picker bar to select a campus map year.</p></ion-text>
+        <ion-text><p>Drag the transperancy slider to see what campus looks like today. </p></ion-text>
+        <ion-text><p>Click on any building footprint polygon to view the corresponding building in the photograph.</p></ion-text>
     </ion-content>
   </ion-modal>
   <ion-split-pane when="xs" content-id="main">
@@ -518,11 +491,11 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
        <ion-buttons slot="start">
         <ion-img src="husky.svg" style="width: 50px; height: 50px;"></ion-img>
       </ion-buttons>  
-      <ion-title>Historic Campus Photo Viewer</ion-title>    
+      <ion-title>Historic Campus Buidling Explorer</ion-title>    
   </ion-toolbar>
     </ion-header>
     <ion-content>
-  <ion-segment value="1900">
+  <ion-segment color="dark" value="1900">
   <ion-segment-button value="1900">
     <ion-label>Campus 1900</ion-label>
   </ion-segment-button>  
@@ -549,7 +522,7 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     <ion-header>
 
       <ion-toolbar color="dark"> 
-     <ion-button size="med" slot="end">
+     <ion-button size="med" slot="end" color="dark">
   <ion-icon name="information-circle-outline" size="large" slot="icon-only"></ion-icon>
 </ion-button>     
       </ion-toolbar>
