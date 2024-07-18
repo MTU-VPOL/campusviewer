@@ -47,9 +47,9 @@
   margin-top: 48.4999px;
 }
 
-/*.esri-ui .esri-popup  {
+.esri-ui .esri-popup  {
   display:  none !important;
- }  */
+ }  
 
 ion-split-pane {
   --side-width: 50%;
@@ -452,6 +452,14 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
 }
   });
 
+  $("#openModal").click(function(){
+      modal.isOpen = true;
+    });
+
+    $("#close").click(function(){
+      modal.isOpen = false;
+    });
+
 });
 </script>
 
@@ -463,7 +471,7 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
       <ion-toolbar>        
         <ion-title>About this Application</ion-title>
         <ion-buttons slot="end">
-          <ion-button onclick="cancel()" strong="true">X</ion-button>
+          <ion-button onclick="cancel()" strong="true" id="close">X</ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -522,7 +530,7 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     <ion-header>
 
       <ion-toolbar color="dark"> 
-     <ion-button size="med" slot="end" color="dark">
+     <ion-button size="med" slot="end" color="dark" id="openModal">
   <ion-icon name="information-circle-outline" size="large" slot="icon-only"></ion-icon>
 </ion-button>     
       </ion-toolbar>
