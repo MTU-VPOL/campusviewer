@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Add shadow */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add shadow */
   margin: 5px; /* Margin between buttons */
   padding: 0;
 }
@@ -65,6 +65,19 @@ ion-split-pane {
   left: 70px;
  }
 
+ #infobox {
+  width: 500px;
+  height: auto;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  margin-top: 56px;
+  background-color: rgb(105,105,105, .3);
+  box-sizing: border-box;
+  padding: 5px;
+
+ }
+
 
   ion-range {
     width: 30%;
@@ -72,7 +85,7 @@ ion-split-pane {
     top:68px;
     left: 90px;
     --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
-    --bar-background: #83A1A0;
+    --bar-background: #fbad18;
     --bar-background-active: #d7d8da;
     --bar-height: 6px;
     --bar-border-radius: 8px;
@@ -359,11 +372,15 @@ ion-split-pane {
     const desc = graphic.attributes.Description;    
     const photoid = graphic.attributes.PhotoID;
     const year = graphic.attributes.BldgYear; 
+    const name = graphic.attributes.Name; 
     const map = graphic.attributes.Map;
     console.log(photoid);
      if (currentImg != photoid) {
       console.log("not equal");
     }
+
+    $('#title').html("<h3>" +name + "</h3>");
+    $('#desc').html(desc);
 
     currentImg = photoid;
 
@@ -433,11 +450,11 @@ viewer.addOverlay({
   location: viewportPoint 
 });    
 
-var deltaX = .5; // Example value, adjust based on how much area you want to show
-var deltaY = .5; // Example value, adjust based on how much area you want to show
+var deltaX = .4; // Example value, adjust based on how much area you want to show
+var deltaY = .4; // Example value, adjust based on how much area you want to show
 var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - deltaY, 2 * deltaX, 2 * deltaY);
 
-viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
+//viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
 //document.getElementById("title").innerHTML = address + ", " + place_name;
 
 });
@@ -456,9 +473,9 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
       modal.isOpen = true;
     });
 
-    $("#close").click(function(){
-      modal.isOpen = false;
-    });
+  $("#close").click(function(){
+    modal.isOpen = false;
+  });
 
 });
 </script>
@@ -537,6 +554,15 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
     </ion-header>
     <ion-content>
      <div id='openseadragon1' class="responsive"></div> </ion-content>
+     <div id="infobox">
+       <ion-text color="light" id="title">
+  <h3>Click any building footprint on the map to see the buiding.</h3>
+</ion-text>
+
+<ion-text color="light" id="desc">
+  <p></p>
+</ion-text>
+     </div>
   </div>
 </ion-split-pane>
 </ion-app">
