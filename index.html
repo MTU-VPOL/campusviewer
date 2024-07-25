@@ -78,27 +78,37 @@ ion-split-pane {
 
  }
 
-
-  ion-range {
-    width: 30%;
-    position: absolute;
-    top:68px;
-    left: 90px;
-    --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
-    --bar-background: #fbad18;
-    --bar-background-active: #d7d8da;
-    --bar-height: 6px;
-    --bar-border-radius: 8px;
-    --knob-background: #ffffff;
-    --knob-size: 30px;
-    --pin-background: #ffafcc;
-    --pin-color: #fff; 
-  }
+ion-range {
+  width: 30%;
+  position: absolute;
+  top:68px;
+  left: 90px;
+  --knob-box-shadow:  0 3px 1px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.13), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  --bar-background: #fbad18;
+  --bar-background-active: #d7d8da;
+  --bar-height: 6px;
+  --bar-border-radius: 8px;
+  --knob-background: #ffffff;
+  --knob-size: 30px;
+  --pin-background: #ffafcc;
+  --pin-color: #fff; 
+}
 
   ion-segment {
     --background: #ffcd00;
-     --indicator-color: black; !important /* Change this to your desired color */
+    --indicator-color: blue; !important /* Change this to your desired color */
      --color: black;
+     --color-checked: black;
+   }
+
+  ion-segment-button {
+    --background: green;
+    --background-checked: black;
+    --color: lightblue;
+    --color-checked: black;   
+    --indicator-height: 6px;
+    --indicator-color: blue !important;
+  }
   }
 
  .responsive {
@@ -168,6 +178,12 @@ ion-split-pane {
     }
 }
 
+.esri-view .esri-view-surface--touch-none:focus::after {
+  outline: none !important;
+}
+
+
+
   </style>
   <script>
   require([
@@ -179,9 +195,9 @@ ion-split-pane {
     "esri/core/reactiveUtils"
   ], function(esriConfig, Map, MapView, FeatureLayer, TileLayer,  reactiveUtils) {
 
-   var modal = document.querySelector('ion-modal');
+  var modal = document.querySelector('ion-modal');
 
-    modal.isOpen = false;
+  modal.isOpen = false;
 
   const viewer = OpenSeadragon({
     id: "openseadragon1",
@@ -269,6 +285,7 @@ ion-split-pane {
 
    const range = document.querySelector('ion-range');
    const datePicker = document.querySelector('ion-segment');
+
    // Keep track of the currently active tile layers
    let activeTileLayer = null;
 
@@ -299,7 +316,7 @@ ion-split-pane {
       map.add(tileLayerToAdd, 0);
       activeTileLayer = tileLayerToAdd; // Update the active layer
       // get the value of the range slider  
-      let rangeVal = $( "ion-range" ).val();
+      let rangeVal = $("ion-range").val();
      
       activeTileLayer.opacity = rangeVal / 100;        
      
@@ -516,7 +533,7 @@ var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - 
        <ion-buttons slot="start">
         <ion-img src="husky.svg" style="width: 50px; height: 50px;"></ion-img>
       </ion-buttons>  
-      <ion-title>Historic Campus Buidling Explorer</ion-title>    
+      <ion-title>Historical Campus Building Explorer</ion-title>    
   </ion-toolbar>
     </ion-header>
     <ion-content>
