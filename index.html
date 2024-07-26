@@ -204,11 +204,13 @@ ion-range {
     prefixUrl: "https://cdn.jsdelivr.net/gh/Benomrans/openseadragon-icons@main/images/",
     maxZoomLevel: null, 
     showFullPageControl: false,  // Disable the full page button
+    defaultZoomLevel: 1,
     tileSources: {
      type: "image",
     url: "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg"
     },   
   });
+
 
   const map = new Map({
     basemap: "satellite"
@@ -304,6 +306,20 @@ ion-range {
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
+
+    // Change default information
+    $('#title').html("<h3>Click any building footprint on the map to see the building in the photo.</h3>");
+    $('#desc').html(" ");
+
+     // remove overlays     
+     viewer.addHandler('open', function() {
+
+      if (overlay == true) {
+        viewer.removeOverlay("img-pin");        
+      } 
+
+    });
+
     // filter the building footprints based on the year
     footprints.definitionExpression = "BldgYear = " + year + "AND PhotoXY is not null";
 
@@ -313,6 +329,9 @@ ion-range {
         type: "image",
         url: yearToUrlMap[year]
     })  
+
+     viewer.viewport.zoomTo(viewer.viewport.getZoom() * 4);
+
     
     // get variable from attributes for the map year string
     const mapstr = "map_" + year;
@@ -354,6 +373,7 @@ ion-range {
 
   // start off at the default year
   goToYear(1900);
+
 
   // Listen for changes on the date picker
   datePicker.addEventListener('ionChange', (value) => {
@@ -482,11 +502,11 @@ viewer.addOverlay({
   location: viewportPoint 
 });    
 
-var deltaX = .4; // Example value, adjust based on how much area you want to show
-var deltaY = .4; // Example value, adjust based on how much area you want to show
+var deltaX = .2; // Example value, adjust based on how much area you want to show
+var deltaY = .2; // Example value, adjust based on how much area you want to show
 var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - deltaY, 2 * deltaX, 2 * deltaY);
 
-//viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
+viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth animation
 //document.getElementById("title").innerHTML = address + ", " + place_name;
 
 });
@@ -544,7 +564,10 @@ var bounds = new OpenSeadragon.Rect(viewportPoint.x - deltaX, viewportPoint.y - 
   <ion-split-pane when="xs" content-id="main">
   <ion-menu content-id="main">
     <ion-header>
-      <ion-toolbar color="dark">     
+      <ion-toolbar color="dark"> 
+      <ion-buttons slot="start">
+            <ion-button text="HOME" icon="home-outline" onclick="window.open('https://mtu-vpol.github.io/kiosk','_self')"><ion-icon name="caret-back"></ion-icon> MENU</ion-back-button>
+          </ion-buttons>    
        <ion-buttons slot="start">
         <ion-img src="husky.svg" style="width: 50px; height: 50px;"></ion-img>
       </ion-buttons>  
