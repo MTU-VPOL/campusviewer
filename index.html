@@ -283,6 +283,14 @@ ion-range {
     }),
   };
 
+  const yearToUrlMap = {
+  "1900": "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2000855.tif/full/max/0/default.jpg",
+  "1917": "https://cchi-iif.mtu.edu/iiif/3/MS042-036-999-P-037B.jpg/full/max/0/default.jpg",
+  "1954": "https://cchi-iif.mtu.edu/iiif/3/MS038-005-008-001.jpg/full/max/0/default.jpg",
+  "1955": "https://cchi-iif.mtu.edu/iiif/3/Book-LD3328H3-131-4.jpg/full/max/0/default.jpg",
+  "1965": "https://cchi-iif.mtu.edu/iiif/3/MTU%20Neg%2003157.jpg/full/max/0/default.jpg"
+  };
+
    const range = document.querySelector('ion-range');
    const datePicker = document.querySelector('ion-segment');
 
@@ -298,6 +306,13 @@ ion-range {
   function goToYear (year) {
     // filter the building footprints based on the year
     footprints.definitionExpression = "BldgYear = " + year + "AND PhotoXY is not null";
+
+    // add default image based on the map year
+    // Open a new image in the viewer
+    viewer.open({
+        type: "image",
+        url: yearToUrlMap[year]
+    })  
     
     // get variable from attributes for the map year string
     const mapstr = "map_" + year;
