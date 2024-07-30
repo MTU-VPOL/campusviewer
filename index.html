@@ -72,7 +72,7 @@ ion-split-pane {
   right: 0;
   top: 0px;
   margin-top: 56px;
-  background-color: rgb(105,105,105, .3);
+  background-color: rgb(105,105,105, .5);
   box-sizing: border-box;
   padding: 5px;
 
@@ -180,6 +180,10 @@ ion-range {
 
 .esri-view .esri-view-surface--touch-none:focus::after {
   outline: none !important;
+}
+
+img {
+  height: auto !important;
 }
 
 
@@ -552,13 +556,16 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
 
         Some of the maps in this application are future plans, meaning they give an idea of what may be built on campus in the future. What this means is that a map from 1955 may have buildings that were not actually built until the 1960s. Therefore, there may be some disrepencies between the photo and the map for certain periods of time. </p>
 
-        <p> The historical maps in this application such as Historical Campus Maps and Sanborn Fire Insurance Plans are from the Keweenaw Time Travler project. The photographs are from the Michigan Tech Archives.</p> 
+        <p> The historical maps in this application such as Historical Campus Maps and Sanborn Fire Insurance Plans are from the Keweenaw Time Traveler project. The photographs are from the Michigan Tech Archives.</p> 
       </ion-text> 
 
         <ion-text><h3>Using the Application</h3></ion-text>
         <ion-text><p>Use the Date Picker bar to select a campus map year.</p></ion-text>
+        <img src="datepicker.png" alt="Image of date picker"></ion-img>
         <ion-text><p>Drag the transperancy slider to see what campus looks like today. </p></ion-text>
+        <img src="opacity.png" alt="Image of opacity slider"></ion-img>
         <ion-text><p>Click on any building footprint polygon to view the corresponding building in the photograph.</p></ion-text>
+        <img src="footprints.png" alt="Image of Sanborn Map building footprints"></ion-img>
     </ion-content>
   </ion-modal>
   <ion-split-pane when="xs" content-id="main">
