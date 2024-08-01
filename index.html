@@ -57,14 +57,6 @@ ion-split-pane {
   --border: none;
 }
 
-#rangecontainer {
-  background-color: white;
-  width: 30%;
-  position: absolute;
-  top:68px;
-  left: 70px;
- }
-
  #infobox {
   width: 500px;
   height: auto;
@@ -310,7 +302,6 @@ img {
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
-
     // Change default information
     $('#title').html("<h3>Click any building footprint on the map to see the building in the photo.</h3>");
     $('#desc').html(" ");
@@ -332,9 +323,7 @@ img {
     viewer.open({
         type: "image",
         url: yearToUrlMap[year]
-    })  
-
-     viewer.viewport.zoomTo(viewer.viewport.getZoom() * 4);
+    })        
 
     
     // get variable from attributes for the map year string
@@ -384,14 +373,14 @@ img {
     console.log(event.detail.value);
     const mapYear = parseInt(event.detail.value);
     // Update the map and footprints with the corresponding date
-    goToYear(mapYear);
+    goToYear(mapYear);    
   });  
 
   // when a new image opens in the viewer
   viewer.addHandler('open', function() {
     var tiledImage = viewer.world.getItemAt(0);
     var imgWidth = tiledImage.getContentSize().x;
-    var imgHeight = tiledImage.getContentSize().y;    
+    var imgHeight = tiledImage.getContentSize().y;     
     console.log("Image dimensions in pixels:", imgWidth, imgHeight);
   });
 
@@ -627,6 +616,6 @@ viewer.viewport.fitBounds(bounds, true); // The second parameter enables smooth 
      </div>
   </div>
 </ion-split-pane>
-</ion-app">
+</ion-app>
 </body>
 </html>
