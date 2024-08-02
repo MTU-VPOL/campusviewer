@@ -215,8 +215,8 @@ img {
   const view = new MapView({
     container: "viewDiv",
     map: map,
-    center: [-88.54608828541998, 47.11898716569741],
-    zoom: 19
+    center: [-88.548513, 47.120331],
+    zoom: 18
   });
   
   const renderer = {
@@ -323,8 +323,12 @@ img {
     viewer.open({
         type: "image",
         url: yearToUrlMap[year]
-    })        
+    }) 
 
+    // reset the viewer to its original state for the new image
+    viewer.addOnceHandler('open', function() {
+      viewer.viewport.goHome(true);
+    });
     
     // get variable from attributes for the map year string
     const mapstr = "map_" + year;
