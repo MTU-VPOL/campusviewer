@@ -236,7 +236,8 @@ img {
     popupEnabled: true,
     definitionExpression: "BldgYear = 1908",
     renderer: renderer,
-    outFields: ["*"]
+    outFields: ["*"],
+    maxScale: 23
   });
 
   map.add(footprints, 1);
@@ -299,6 +300,16 @@ img {
    function cancel() {
     modal.isOpen = false;
    }
+
+   // Go to the extent of the data
+    footprints
+    .when(() => {
+      return footprints.queryExtent();
+    })
+    .then((response) => {
+      view.goTo(response.extent);
+    });
+  
   
   // Switches the building footprints and map based on the year selected
   function goToYear (year) {
@@ -358,14 +369,7 @@ img {
     } else {
       console.log("Tile layer not found for the given map year:", year);
     }
-    // Go to the extent of the data
-    footprints
-    .when(() => {
-      return footprints.queryExtent();
-    })
-    .then((response) => {
-      view.goTo(response.extent);
-    });
+   
   }
 
   // start off at the default year
